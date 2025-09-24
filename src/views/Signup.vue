@@ -5,35 +5,17 @@
     <form @submit.prevent="handleSignup">
       <div>
         <label for="username">Nom d'utilisateur</label>
-        <input
-          type="text"
-          id="username"
-          v-model="form.username"
-          required
-          placeholder="Votre pseudo"
-        />
+        <input type="text" id="username" v-model="form.username" required placeholder="Votre pseudo" />
       </div>
 
       <div>
         <label for="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          v-model="form.email"
-          required
-          placeholder="votre@email.com"
-        />
+        <input type="email" id="email" v-model="form.email" required placeholder="votre@email.com" />
       </div>
 
       <div>
         <label for="password">Mot de passe</label>
-        <input
-          type="password"
-          id="password"
-          v-model="form.password"
-          required
-          placeholder="********"
-        />
+        <input type="password" id="password" v-model="form.password" required placeholder="********" />
       </div>
 
       <button type="submit">S'inscrire</button>
@@ -77,7 +59,9 @@ export default {
 
         // ✅ Save token in localStorage
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user",  data.user.username);
+        window.dispatchEvent(new Event("storage"));
+        this.$router.push("/");
         // ✅ Succès
         this.message = "Inscription réussie 🎉 Bienvenue " + data.user.username;
         this.isError = false;

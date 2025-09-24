@@ -16,7 +16,7 @@
       <button type="submit">Login</button>
     </form>
 
-    <p v-if="message" :class="{'error': isError, 'success': !isError}">
+    <p v-if="message" :class="{ error: isError, success: !isError }">
       {{ message }}
     </p>
   </div>
@@ -62,13 +62,10 @@ export default {
         // Success: store token and display welcome message
         localStorage.setItem("token", data.token);
         localStorage.setItem("username", data.username);
-
+        window.dispatchEvent(new Event("storage"));
         this.message = `Login successful 🎉 Welcome ${data.username}`;
         this.isError = false;
-
-        // Optional: redirect to dashboard after login
-        // this.$router.push("/dashboard");
-
+        this.$router.push("/");
       } catch (err) {
         this.isError = true;
         this.message = "An error occurred. Please try again.";
