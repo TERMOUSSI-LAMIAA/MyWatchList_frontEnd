@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import MediaItem from "./MediaItem.vue";
-import MediaForm from "./MediaForm.vue";
+import MediaItem from "../components/MediaItem.vue";
+import MediaForm from "../components/MediaForm.vue";
 
 export default {
   name: "Watchlist",

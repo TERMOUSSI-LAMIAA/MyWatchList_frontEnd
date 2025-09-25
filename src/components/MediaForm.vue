@@ -42,7 +42,7 @@
       <input type="file" @change="handleFileChange" />
     </div>
 
-    <button type="submit">Add Media</button>
+    <button type="submit">{{ mode === "edit" ? "Update" : "Add" }} Media</button>
     <p v-if="message" :class="{ error: isError, success: !isError }">{{ message }}</p>
   </form>
 </template>
@@ -50,15 +50,25 @@
 <script>
 export default {
   name: "MediaForm",
+  props: {
+    initialData: {
+      type: Object,
+      default: null,
+    },
+    mode: {
+      type: String,
+      default: "add", // "add" or "edit"
+    },
+  },
   data() {
     return {
       form: {
-        title: "",
-        type: "MOVIE",
-        genre: "",
-        status: "TO_WATCH",
-        progress: "",
-        description: "",
+        title: this.initialData?.title || "",
+        type: this.initialData?.type || "MOVIE",
+        genre: this.initialData?.genre || "",
+        status: this.initialData?.status || "TO_WATCH",
+        progress: this.initialData?.progress || "",
+        description: this.initialData?.description || "",
         poster: null, // file object
       },
       message: "",
@@ -81,8 +91,12 @@ export default {
           }
         }
 
-        const response = await fetch("http://localhost:3000/api/media", {
-          method: "POST",
+        const url = this.mode === "add" ? "http://localhost:3000/api/media" : `http://localhost:3000/api/media/${this.initialData.id}`;
+
+        const method = this.mode === "add" ? "POST" : "PUT";
+
+        const response = await fetch(url, {
+          method,
           headers: {
             Authorization: "Bearer " + token,
           },
@@ -91,22 +105,23 @@ export default {
 
         const data = await response.json();
 
-        if (!response.ok) throw new Error(data.message || "Failed to add media");
+        if (!response.ok) throw new Error(data.message || "Failed");
 
         // Emit new media to parent
-        this.$emit("media-added", data.media);
-
-        // Reset form
-        this.form = {
-          title: "",
-          type: "MOVIE",
-          genre: "",
-          status: "TO_WATCH",
-          progress: "",
-          description: "",
-          poster: null,
-        };
-        this.message = "Media added successfully 🎉";
+        this.$emit(this.mode === "add" ? "media-added" : "media-updated", data.media);
+        // Reset form only if adding
+        if (this.mode === "add") {
+          this.form = {
+            title: "",
+            type: "MOVIE",
+            genre: "",
+            status: "TO_WATCH",
+            progress: "",
+            description: "",
+            poster: null,
+          };
+        }
+        this.message = this.mode === "add" ? "Media added!" : "Media updated!";
         this.isError = false;
       } catch (err) {
         this.message = err.message;
@@ -124,7 +139,10 @@ form {
   gap: 0.5rem;
 }
 
-input, select, textarea, button {
+input,
+select,
+textarea,
+button {
   padding: 0.4rem;
   font-size: 1rem;
 }
@@ -137,4 +155,3 @@ input, select, textarea, button {
   color: green;
 }
 </style>
-

@@ -1,27 +1,7 @@
 <template>
-  <div class="media-card">
+  <div class="media-card" @click="goToDetails">
     <img v-if="media.poster" :src="getPosterUrl(media.poster)" alt="Poster" class="poster" />
     <h3>{{ media.title }}</h3>
-    <p>
-      <strong>Type:</strong>
-      {{ media.type }}
-    </p>
-    <p v-if="media.genre">
-      <strong>Genre:</strong>
-      {{ media.genre }}
-    </p>
-    <p>
-      <strong>Status:</strong>
-      {{ media.status }}
-    </p>
-    <p v-if="media.progress">
-      <strong>Progress:</strong>
-      {{ media.progress }}
-    </p>
-    <p v-if="media.description">
-      <strong>Description:</strong>
-      {{ media.description }}
-    </p>
   </div>
 </template>
 
@@ -36,8 +16,11 @@ export default {
   },
   methods: {
     getPosterUrl(filename) {
-      if (!filename) return '';
+      if (!filename) return "";
       return `http://localhost:3000/uploads/${filename}`;
+    },
+    goToDetails() {
+      this.$router.push(`/media/${this.media.id}`);
     },
   },
 };
@@ -49,6 +32,13 @@ export default {
   border-radius: 6px;
   padding: 1rem;
   margin-bottom: 1rem;
+  cursor: pointer; /* 🖱️ indicates it's clickable */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* smooth hover effect */
+}
+
+.media-card:hover {
+  transform: translateY(-3px); /* slight lift */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* subtle shadow */
 }
 
 .poster {
